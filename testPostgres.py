@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import psycopg2
+import os
 
 app = Flask(__name__)
 
@@ -19,14 +20,20 @@ print('')
 print('Welcome to the Library! Select your action by the following triggers:')
 print('')
 def main():
-    print('# - Input new book into library === INPUT')
-    print('# - Search a book from library  === SEARCH')
-    print('# - Delete a book from library  === DELETE')
+    print('')
+    print('###- Input the new book into library === INPUT')
+    print('###- Search the book from library    === SEARCH')
+    print('###- Delete the book from library    === DELETE')
+    print('###- Change something from library   === CHANGE')
+    print('###- Display the table               === DISPLAY')
+    print('')
+    print('###- ', end='')
 
     command = input()
     if command.lower() == 'exit':
         exit()
     if command.lower() == 'input':
+        os.system('clear')
         print('Write name: ', end='')
         nam = input()
         print('Write author: ', end='')
@@ -42,6 +49,7 @@ def main():
         conn.commit()
 
     if command.lower() == 'search':
+        os.system('clear')
         print('What is your trigger?')
         print('###-NAME')
         print('###-AUTHOR')
@@ -77,10 +85,56 @@ def main():
             for col in rows:
                 print(col)
 
-    cursor.execute("""SELECT * FROM library;""")
-    rows = cursor.fetchall()
-    print(rows)
+    if command.lower() == 'delete':
+        os.system('clear')
+        print('What you want to delete? Type name of the book: ', end='')
+        word = input()
+        cursor.execute("DELETE FROM library WHERE name = (%s)", (word,))
+        conn.commit()
+
+    if command.lower() == 'change':
+        os.system('clear')
+        print('Type name of book: ', end='')
+        word = input()
+        print('')
+        print('What you want to change?')
+        print('###- NAME')
+        print('###- AUTHOR')
+        print('###- GENRE')
+        print('###- LANGUAGE')
+        print('')
+        print('###- ', end='')
+        trigger = input()
+        print('')
+        print('###- Type your change here: ', end='')
+        change = input()
+        print('')
+
+        if trigger.lower() == 'name':
+            cursor.execute("UPDATE library SET name = %s WHERE name = (%s)", (change, word,));
+            conn.commit()
+        elif trigger.lower() == 'author':
+            cursor.execute("UPDATE library SET author = %s WHERE name = (%s)", (change, word,));
+            conn.commit()
+        elif trigger.lower() == 'genre':
+            cursor.execute("UPDATE library SET genre = %s WHERE name = (%s)", (change, word,));
+            conn.commit()
+        elif trigger.lower() == 'language':
+            cursor.execute("UPDATE library SET language = %s WHERE name = (%s)", (change, word,));
+            conn.commit()
+
+
+    if command.lower() == 'display':
+        os.system('clear')
+        cursor.execute("SELECT * FROM library");
+        rows = cursor.fetchall()
+        for tup in rows:
+            print('')
+            for word in tup:
+                print("| {} |".format(word), end="")
+
 
 if __name__ == '__main__':
     while True:
+        print('')
         main()
