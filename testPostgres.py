@@ -9,6 +9,23 @@ connect_str = "dbname='testpython' user='mat' host='localhost' " + \
                   "password='manamsirajdi12'"
 conn = psycopg2.connect(connect_str)
 cursor = conn.cursor()
+
+def checkSize(arr):
+    lengthOfTable = len(arr[0])
+    tableOfLength = []
+
+    for j in range(lengthOfTable):
+        maxlength2 = 0
+        for i in arr:
+            if type(i[j]) is not int:
+                maxlength1 = len(i[j])
+            else:
+                maxlength1 = len(str(i[j]))
+            if maxlength1 > maxlength2:
+                maxlength2 = maxlength1
+        tableOfLength.append(maxlength2)
+    return tableOfLength
+
 # cursor.execute("""CREATE TABLE library (
 # id SERIAL PRIMARY KEY,
 # name VARCHAR NOT NULL,
@@ -128,10 +145,18 @@ def main():
         os.system('clear')
         cursor.execute("SELECT * FROM library");
         rows = cursor.fetchall()
-        for tup in rows:
+        a = checkSize(rows)
+        for cup in rows:
+            ind = 0
+            for word in cup:
+                print(' {} '.format(word), end='')
+
+                for i in range(a[ind] - len(str(word))):
+                    print(' ', end='')
+                print('|', end='')
+                ind = ind + 1
             print('')
-            for word in tup:
-                print("| {} |".format(word), end="")
+
 
 
 if __name__ == '__main__':
